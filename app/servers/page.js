@@ -17,8 +17,20 @@ export default function ServersPage() {
   const [serverRam, setServerRam] = useState(1024)
 
   useEffect(() => {
-    checkUser()
-  }, [])
+  checkUser()
+}, [])
+
+// Add this NEW useEffect for auto-refresh
+useEffect(() => {
+  if (!user) return
+  
+  // Refresh server list every 5 seconds
+  const interval = setInterval(() => {
+    fetchServers(user.id)
+  }, 5000)
+  
+  return () => clearInterval(interval) // Cleanup on unmount
+}, [user])
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser()
